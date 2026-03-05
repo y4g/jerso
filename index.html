@@ -727,6 +727,136 @@ h1 .last  {
   transition: opacity .7s cubic-bezier(.23,1,.32,1), transform .7s cubic-bezier(.23,1,.32,1);
 }
 .reveal.visible { opacity: 1; transform: translateY(0); }
+
+/* ═══════════════════════════════════════════════════════════
+   MOBILE RESPONSIVE — max-width 768px
+═══════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+
+  /* Hide desktop-only decorative elements */
+  #cursor-ring, #cursor-dot,
+  .corner, .coord, .grid-lines,
+  .v-line, .glyph, #canvas-noise,
+  #bottom-bar, #tooltip { display: none !important; }
+
+  /* Re-enable normal cursor on mobile */
+  html, body { cursor: auto; overflow-y: auto; overflow-x: hidden; height: auto; }
+
+  /* Status bar — simplified */
+  #status-bar {
+    padding: 0 16px; height: 32px; overflow: hidden;
+  }
+  .status-left .status-item:nth-child(3),
+  .status-left .status-divider:nth-child(4),
+  .status-left .status-divider:nth-child(2) { display: none; }
+
+  /* Scene — scroll instead of fixed */
+  #scene {
+    position: relative;
+    height: auto;
+    overflow-y: auto;
+    perspective: none;
+  }
+
+  /* Layout: stack vertically, card first */
+  #layout {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    height: auto;
+    padding: 48px 20px 60px;
+    gap: 40px;
+    grid-template-columns: unset;
+  }
+
+  /* Reorder: card on top, left panel, right panel */
+  #card-wrap   { order: 1; width: 100%; }
+  #panel-left  { order: 2; width: 100%; }
+  #panel-right { order: 3; width: 100%; }
+
+  /* Card full width */
+  #card { width: 100%; max-width: 420px; margin: 0 auto; }
+  #card-wrap { width: 100%; display: flex; justify-content: center; }
+
+  /* Left panel — center aligned on mobile */
+  #panel-left {
+    align-items: center;
+    padding-right: 0;
+    text-align: center;
+    transform: none !important;
+    animation: panelInMobile .9s cubic-bezier(.23,1,.32,1) forwards .4s;
+  }
+  @keyframes panelInMobile { from{opacity:0;transform:translateY(20px);} to{opacity:1;transform:translateY(0);} }
+
+  .name-block { text-align: center; margin-bottom: 28px; }
+
+  .name-eyebrow {
+    justify-content: center;
+  }
+  .name-eyebrow::before { display: none; }
+
+  h1 { font-size: 52px; }
+
+  .name-sub {
+    justify-content: center;
+  }
+  .name-sub::after { display: none; }
+
+  .bio-block { text-align: center; max-width: 100%; margin-bottom: 28px; }
+
+  .skill-list { align-items: center; width: 100%; }
+  .skill-row { justify-content: center; flex-direction: row-reverse; }
+
+  /* Right panel — center aligned */
+  #panel-right {
+    align-items: center;
+    padding-left: 0;
+    transform: none !important;
+    animation: panelInMobile .9s cubic-bezier(.23,1,.32,1) forwards .5s;
+  }
+
+  .services-block { width: 100%; margin-bottom: 28px; }
+  .block-label { justify-content: center; }
+  .block-label::before { display: none; }
+
+  .service-line { font-size: 12px; }
+  .svc-tag { display: none; }
+
+  .process-block { width: 100%; margin-bottom: 28px; }
+  .process-step { max-width: 340px; }
+  .step-desc { max-width: 100%; }
+
+  .cta-block { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 16px; }
+  .cta-btn { cursor: pointer; width: 100%; max-width: 280px; justify-content: center; }
+
+  .tz-strip {
+    width: 100%; max-width: 320px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 0;
+  }
+  .tz-cities { flex-wrap: wrap; justify-content: center; gap: 10px; }
+
+  /* Loader */
+  .loader-pct { font-size: 36px; }
+
+  /* Disable 3D tilt on mobile (touch feels bad) */
+  #card-wrap { animation: cardDropMobile 1.1s cubic-bezier(.23,1,.32,1) forwards; }
+  @keyframes cardDropMobile {
+    from { opacity:0; transform: translateY(-20px); }
+    to   { opacity:1; transform: translateY(0); }
+  }
+}
+
+/* ── Small phones (max 380px) ── */
+@media (max-width: 380px) {
+  h1 { font-size: 42px; }
+  #layout { padding: 44px 14px 50px; }
+  .profile-name { font-size: 18px; }
+  .metric-val { font-size: 22px; }
+  .tz-cities { gap: 8px; }
+}
 </style>
 </head>
 <body>
@@ -1213,6 +1343,7 @@ function initCardTilt() {
   let tSX=0,tSY=0,cSX=0,cSY=0; // shadow
 
   document.addEventListener('mousemove', e => {
+    if (isMobile()) return;
     const nx = (e.clientX - innerWidth/2)  / (innerWidth/2);
     const ny = (e.clientY - innerHeight/2) / (innerHeight/2);
     tRY = nx * 14;
@@ -1357,7 +1488,9 @@ function initParticleField() {
 }
 
 /* ── PARALLAX PANELS ON MOUSE ─────────────────────────────────────── */
+const isMobile = () => window.innerWidth <= 768;
 document.addEventListener('mousemove', e => {
+  if (isMobile()) return;
   const nx = (e.clientX - innerWidth/2)  / innerWidth;
   const ny = (e.clientY - innerHeight/2) / innerHeight;
   const pl = document.getElementById('panel-left');
